@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
@@ -30,9 +32,8 @@ public class MainActivity extends AppCompatActivity {
 
         mChart = findViewById(R.id.chart);
         List<Entry> entries = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
-            entries.add(new Entry(i, (float)(Math.random() * 100)));
-        }
+        entries.add(new Entry(20, 2500f));
+        entries.add(new Entry(24, 1000f));
         LineDataSet dataSet = new LineDataSet(entries, "label");
         dataSet.setColor(Color.rgb(192,192,192));
         dataSet.setLineWidth(2f);
@@ -47,13 +48,30 @@ public class MainActivity extends AppCompatActivity {
         XAxis xAxis = mChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setGranularity(1f);
-        xAxis.setLabelCount(30);
+        xAxis.setAxisMinimum(1);
+        xAxis.setLabelCount(31);
+        xAxis.setAxisMaximum(31f);
+        xAxis.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return String.format("10/%.0f", value);
+            }
+        });
         xAxis.setTextColor(Color.rgb(153,153,153));
 
 
         YAxis yAxisLeft = mChart.getAxisLeft();
         yAxisLeft.setLabelCount(12);
         yAxisLeft.setAxisMinimum(0);
+        yAxisLeft.setAxisMaximum(3000f);
+        yAxisLeft.setGranularity(250f);
+        yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                return String.format("%.2fL", value / 1000.0);
+            }
+        });
+
         yAxisLeft.setTextColor(Color.rgb(153,153,153));
         xAxis.setGridDashedLine(new DashPathEffect(new float[]{5, 10, 5, 10}, 0));
         yAxisLeft.setDrawGridLines(false);
@@ -63,10 +81,10 @@ public class MainActivity extends AppCompatActivity {
         yAxisRight.setEnabled(false);
         mChart.setScaleEnabled(false);
         Matrix m = new Matrix();
-        m.postScale(20f, 1);
+        m.postScale(4f, 1);
         mChart.getViewPortHandler().refresh(m, mChart, false);
         mChart.invalidate();
-        mChart.moveViewToX(99);
+        mChart.moveViewToX(24);
         mChart.getDescription().setEnabled(false);
         Legend l = mChart.getLegend();
         l.setEnabled(false);
