@@ -35,6 +35,12 @@ public class MainActivity extends AppCompatActivity {
         entries.add(new Entry(20, 2500f));
         entries.add(new Entry(24, 1000f));
         LineDataSet dataSet = new LineDataSet(entries, "label");
+        dataSet.setValueFormatter(new IValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                return String.format("%.2f", value / 1000f);
+            }
+        });
         dataSet.setColor(Color.rgb(192,192,192));
         dataSet.setLineWidth(2f);
         dataSet.setCircleColor(Color.rgb(192,192,192));
@@ -59,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         });
         xAxis.setTextColor(Color.rgb(153,153,153));
 
-
         YAxis yAxisLeft = mChart.getAxisLeft();
         yAxisLeft.setLabelCount(12);
         yAxisLeft.setAxisMinimum(0);
@@ -68,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                return String.format("%.2fL", value / 1000.0);
+                return value == 0f ? "" : String.format("%.2fL", value / 1000.0);
             }
         });
 
