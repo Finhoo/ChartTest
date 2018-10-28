@@ -30,69 +30,80 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mChart = findViewById(R.id.chart);
-        List<Entry> entries = new ArrayList<>();
-        entries.add(new Entry(20, 2500f));
-        entries.add(new Entry(24, 1000f));
-        LineDataSet dataSet = new LineDataSet(entries, "label");
-        dataSet.setValueFormatter(new IValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return String.format("%.2f", value / 1000f);
-            }
-        });
-        dataSet.setColor(Color.rgb(192,192,192));
-        dataSet.setLineWidth(2f);
-        dataSet.setCircleColor(Color.rgb(192,192,192));
-        dataSet.setDrawCircleHole(false);
-        dataSet.setCircleRadius(3f);
-        LineData lineData = new LineData(dataSet);
-        lineData.setValueTextColor(Color.rgb(153,153,153));
-        lineData.setValueTextSize(9f);
-        mChart.setData(lineData);
+        {
+            mChart = findViewById(R.id.chart);
+            mChart.setScaleEnabled(false);
+        }
 
-        XAxis xAxis = mChart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setGranularity(1f);
-        xAxis.setAxisMinimum(1);
-        xAxis.setLabelCount(31);
-        xAxis.setAxisMaximum(31f);
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return String.format("10/%.0f", value);
-            }
-        });
-        xAxis.setTextColor(Color.rgb(153,153,153));
+        XAxis xAxis;
+        {
+            xAxis = mChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setGranularity(1f);
+            xAxis.setAxisMinimum(1);
+            xAxis.setLabelCount(31);
+            xAxis.setAxisMaximum(31f);
+            xAxis.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    return String.format("10/%.0f", value);
+                }
+            });
+            xAxis.setTextColor(Color.rgb(153, 153, 153));
+        }
+        YAxis yAxisLeft;
+        {
+            yAxisLeft = mChart.getAxisLeft();
+            yAxisLeft.setLabelCount(12);
+            yAxisLeft.setAxisMinimum(0);
+            yAxisLeft.setAxisMaximum(3000f);
+            yAxisLeft.setGranularity(250f);
+            yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, AxisBase axis) {
+                    return value == 0f ? "" : String.format("%.2fL", value / 1000.0);
+                }
+            });
 
-        YAxis yAxisLeft = mChart.getAxisLeft();
-        yAxisLeft.setLabelCount(12);
-        yAxisLeft.setAxisMinimum(0);
-        yAxisLeft.setAxisMaximum(3000f);
-        yAxisLeft.setGranularity(250f);
-        yAxisLeft.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                return value == 0f ? "" : String.format("%.2fL", value / 1000.0);
-            }
-        });
+            yAxisLeft.setTextColor(Color.rgb(153, 153, 153));
+            xAxis.setGridDashedLine(new DashPathEffect(new float[]{5, 10, 5, 10}, 0));
+            yAxisLeft.setDrawGridLines(false);
+            yAxisLeft.setDrawAxisLine(false);
+            xAxis.setDrawAxisLine(false);
+            mChart.getAxisRight().setEnabled(false);
+        }
 
-        yAxisLeft.setTextColor(Color.rgb(153,153,153));
-        xAxis.setGridDashedLine(new DashPathEffect(new float[]{5, 10, 5, 10}, 0));
-        yAxisLeft.setDrawGridLines(false);
-        yAxisLeft.setDrawAxisLine(false);
-        xAxis.setDrawAxisLine(false);
-        YAxis yAxisRight = mChart.getAxisRight();
-        yAxisRight.setEnabled(false);
-        mChart.setScaleEnabled(false);
+
+
+        {
+            List<Entry> entries = new ArrayList<>();
+            entries.add(new Entry(20, 2500f));
+            entries.add(new Entry(24, 1000f));
+            LineDataSet dataSet = new LineDataSet(entries, "label");
+            dataSet.setValueFormatter(new IValueFormatter() {
+                @Override
+                public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+                    return String.format("%.2f", value / 1000f);
+                }
+            });
+            dataSet.setColor(Color.rgb(192, 192, 192));
+            dataSet.setLineWidth(2f);
+            dataSet.setCircleColor(Color.rgb(192, 192, 192));
+            dataSet.setDrawCircleHole(false);
+            dataSet.setCircleRadius(3f);
+            LineData lineData = new LineData(dataSet);
+            lineData.setValueTextColor(Color.rgb(153, 153, 153));
+            lineData.setValueTextSize(9f);
+            mChart.setData(lineData);
+        }
         Matrix m = new Matrix();
         m.postScale(4f, 1);
         mChart.getViewPortHandler().refresh(m, mChart, false);
-        mChart.invalidate();
         mChart.moveViewToX(24);
         mChart.getDescription().setEnabled(false);
         Legend l = mChart.getLegend();
         l.setEnabled(false);
+        mChart.invalidate();
     }
 
     class Data {
